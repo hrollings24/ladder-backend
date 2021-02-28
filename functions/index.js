@@ -28,6 +28,7 @@ exports.deleteLadder = ladderFunctions.deleteLadder;
 exports.rejectRequest = ladderFunctions.rejectRequest;
 exports.rejectNormalInvite = ladderFunctions.rejectNormalInvite;
 exports.rejectAdminInvite = ladderFunctions.rejectAdminInvite;
+exports.checkName = ladderFunctions.checkName;
 
 //CHALLENGE
 exports.deleteChallenge = challengeFunctions.deleteChallenge;

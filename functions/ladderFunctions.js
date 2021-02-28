@@ -434,3 +434,19 @@ exports.rejectNormalInvite = functions.https.onCall(async (data,context) => {
     return dataToReturn;
 
 })
+
+
+exports.checkName = functions.https.onCall(async (data,context) => {
+
+    const db = admin.firestore();
+    const userCollection = db.collection('ladders');
+    let usersInTheLadder = await userCollection.where('name', '==', data.name).get();
+
+    if ((usersInTheLadder.empty)) {
+        return true;
+    }  
+    else{
+        return false;
+    }
+    
+})
