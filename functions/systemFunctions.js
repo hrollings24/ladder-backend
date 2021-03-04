@@ -98,6 +98,26 @@ exports.deleteUser = functions.https.onCall(async (data,context) => {
         });
     }  
 
+    //remove admin from all their ladders
+    let laddersUserIsAdminOf = await db.collection('ladders').where('admin', 'array-contains', data.userID).get();
+    if (!(laddersUserIsAdminOf.empty)) {
+        laddersUserIsAdminOf.forEach(doc => {
+            doc.ref.update({
+                admins: FieldValue.arrayRemove(data.userID)
+            });
+        });
+    }  
+
+    //remove any requests for the user
+    let requestsForTheUser = await db.collection('ladders').where('requests', 'array-contains', data.userID).get();
+    if (!(requestsForTheUser.empty)) {
+        requestsForTheUser.forEach(doc => {
+            doc.ref.update({
+                requests: FieldValue.arrayRemove(data.userID)
+            });
+        });
+    }  
+
     //delete any challenges the user is envolved in
     let user = await userToDelete.get();
     let userData = user.data()
