@@ -118,3 +118,41 @@ exports.createChallenge = functions.https.onCall(async (data,context) => {
     return dataToReturn;
 })
 
+exports.addWinnerToChallenge = functions.https.onCall(async (data,context) => {
+    //data = [toUser, fromUser, ladderID, message, challengeID, winnerID]
+
+    const db = admin.firestore();
+
+    const challengeRef = db.collection('challenge').doc(data.challengeID);
+    challengeRef.update({
+        winnerselectedby: data.fromUser,
+        winner: data.winnerID
+    })
+
+    const toUserRef = db.collection('users').doc(data.toUser)
+    const inLadder = db.collection('ladders').doc(data.ladderID)
+
+
+    const dataToSaveForNotification = {
+        toUser: toUserRef,
+        ladder: inLadder,
+        message: data.message,
+        challengeRef: challengeRef,
+        title: "Winner Selected",
+        fromUser: db.collection('users').doc(data.fromUser),
+        type: "challengeSelected"
+    };
+      
+    
+
+    //go ahead with notificaton
+    await db.collection('notifications').doc().set(dataToSaveForNotification);
+
+
+    const dataToReturn = {
+        title: "Winner Selected",
+        message: "Your winner has been added. Awaiting acceptance from other user."
+    };
+    return dataToReturn;
+
+})

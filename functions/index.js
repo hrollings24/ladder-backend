@@ -32,8 +32,8 @@ exports.checkName = ladderFunctions.checkName;
 
 //CHALLENGE
 exports.deleteChallenge = challengeFunctions.deleteChallenge;
-exports.createChallenge = challengeFunctions.createChallenge
-
+exports.createChallenge = challengeFunctions.createChallenge;
+exports.addWinnerToChallenge = challengeFunctions.addWinnerToChallenge;
 
 
 //INVITES
@@ -42,7 +42,7 @@ exports.inviteUser = inviteFunctions.inviteUser;
 
 //RESPOND
 exports.acceptAdminInvite = respondFunctions.acceptAdminInvite;
-exports.acceptChallenge = respondFunctions.acceptChallenge
+exports.acceptChallenge = respondFunctions.acceptChallenge;
 
 
 
