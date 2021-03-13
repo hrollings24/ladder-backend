@@ -17,6 +17,15 @@ async function deleteChallengeWith(id){
 
     const challengeRef2 = db.collection('challenge').doc(id);
 
+    let notes = await db.collection('notifications').where('challengeRef', '==', challengeRef2).get();
+    if (!(notes.empty)) {
+        notes.forEach(doc => {
+            let noteRef = doc.ref;
+            noteRef.delete();
+        });
+    }  
+
+
     let challenge = await challengeRef2.get();
     let user1ID = challenge.data().user1
     let user2ID = challenge.data().user2
