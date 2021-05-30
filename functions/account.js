@@ -13,14 +13,14 @@ exports.saveAccountChanges = functions.https.onCall(async (data,context) => {
 
     if (data.username != null){
         //save username
-        userRef.set({
+        userRef.update({
             username: data.username
         })
     }
 
     if (data.picture != null){
         //save picture
-        userRef.set({
+        userRef.update({
             picture: data.picture
         })
     }
