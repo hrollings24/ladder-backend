@@ -10,6 +10,7 @@ const ladderFunctions = require('./ladderFunctions');
 const challengeFunctions = require('./challengeFunctions');
 const inviteFunctions = require('./invites');
 const respondFunctions = require('./respondNotifications');
+const accountFunctions = require('./account');
 
 
 
@@ -44,8 +45,7 @@ exports.inviteUser = inviteFunctions.inviteUser;
 exports.acceptAdminInvite = respondFunctions.acceptAdminInvite;
 exports.acceptChallenge = respondFunctions.acceptChallenge;
 
-
-
-
+//ACCOUNT
+exports.saveAccountChanges = accountFunctions.saveAccountChanges;
 
 
