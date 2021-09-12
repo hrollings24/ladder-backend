@@ -17,17 +17,17 @@ exports.withdrawUserFromLadder = functions.https.onCall(async (data,context) => 
 
     //CHECK IS USER IS AN ADMIN BEFORE REMOVING THE LADDER FROM THEIR ACCOUNT
     if (!data.isAdmin){
-        userRef.update({
+        await userRef.update({
             ladders: FieldValue.arrayRemove(ladderRef)
         });
     }
 
-    ladderRef.update({
+    await ladderRef.update({
         positions: FieldValue.arrayRemove(data.userID)
     });
 
 
-    return "Completed"
+    return "Successfully removed from ladder"
 
 })
 
@@ -449,4 +449,62 @@ exports.checkName = functions.https.onCall(async (data,context) => {
         return false;
     }
     
+})
+
+
+exports.createLadder = functions.https.onCall(async (data,context) => {
+    //data = [permission, name, requests, jump, includeMe, description, currentUserId]
+    
+    const ladderURL = data.name.replace(/\s/g,'')
+    const adminIDs = [currentUserId]
+    const positions = []
+
+    try{
+        //Check if ladder exists
+        const db = admin.firestore();
+
+        const challengeRef = db.collection('ladders');
+        let ladderExisting = await challengeRef.where('url', '==', ladderURL).get();
+
+        if (!ladderExisting.empty) {
+            //Challenge already exists
+            throw "A ladder already exists with this name"
+        }
+
+        if (data.includeMe){
+            positions[0] = currentUserId
+        }
+
+        //If ladder does not exist, create the ladder
+        const dataToSave = {
+            permission: data.permission, 
+            name: data.name,
+            adminIDs: adminIDs,
+            requests: data.requests,
+            jump: data.jump,
+            positions: data.positions,
+            description: data.description,
+            url: ladderURL
+        };
+
+        let ladderNewRef = db.collection('ladders').doc()
+        await ladderNewRef.set(dataToSave);
+
+        db.collection('users').doc(data.currentUserId).update({
+            ladders: FieldValue.arrayUnion(ladderNewRef)
+        })
+        const dataToReturn = {
+            title: "Success",
+            message: "Ladder successfully created",
+            ladderRef: ladderNewRef
+        };
+        return dataToReturn;
+    }
+    catch (ex){
+        const dataToReturn = {
+            title: "Error",
+            message: ex
+        };
+        return dataToReturn;
+    }
 })

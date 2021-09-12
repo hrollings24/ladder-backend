@@ -23,7 +23,7 @@ exports.addAdmin = functions.https.onCall(async (data,context) => {
         title: data.title,
         fromUser: db.collection('users').doc(data.fromUser),
         type: data.type
-    };1
+    };
       
     if ((snapshot.docRef != inLadder) && snapshot2.empty) {
         //go ahead with notificaton
