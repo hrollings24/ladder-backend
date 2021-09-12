@@ -23,9 +23,9 @@ exports.addAdmin = functions.https.onCall(async (data,context) => {
         title: data.title,
         fromUser: db.collection('users').doc(data.fromUser),
         type: data.type
-    };
+    };1
       
-    if (snapshot.empty && snapshot2.empty) {
+    if ((snapshot.docRef != inLadder) && snapshot2.empty) {
         //go ahead with notificaton
         await db.collection('notifications').doc().set(dataToSave);
         const dataToReturn = {
@@ -34,18 +34,10 @@ exports.addAdmin = functions.https.onCall(async (data,context) => {
         };
         return dataToReturn;
     }
-    else if (snapshot2.empty && (snapshot.docRef != inLadder)){
-        await db.collection('notifications').doc().set(dataToSave);
-        const dataToReturn = {
-            title: "Error",
-            message: data.username + " has already been invited as an admin"
-        };
-        return dataToReturn;
-    }
     else{
         //user already invited. Do not send again
         const dataToReturn = {
-            title: "Invitation Sent",
+            title: "Error",
             message: data.username + " is already or has been invited to become an admin"
         };
         return dataToReturn;
