@@ -455,9 +455,10 @@ exports.checkName = functions.https.onCall(async (data,context) => {
 exports.createLadder = functions.https.onCall(async (data,context) => {
     //data = [permission, name, requests, jump, includeMe, description, currentUserId]
     
+    var currentUserId = data.currentUserId
     const ladderURL = data.name.replace(/\s/g,'')
     const adminIDs = [currentUserId]
-    const positions = []
+    var positions = []
 
     try{
         //Check if ladder exists
@@ -479,13 +480,15 @@ exports.createLadder = functions.https.onCall(async (data,context) => {
         const dataToSave = {
             permission: data.permission, 
             name: data.name,
-            adminIDs: adminIDs,
+            admins: adminIDs,
             requests: data.requests,
             jump: data.jump,
-            positions: data.positions,
+            positions: positions,
             description: data.description,
             url: ladderURL
         };
+
+        console.log(dataToSave)
 
         let ladderNewRef = db.collection('ladders').doc()
         await ladderNewRef.set(dataToSave);
@@ -503,7 +506,7 @@ exports.createLadder = functions.https.onCall(async (data,context) => {
     catch (ex){
         const dataToReturn = {
             title: "Error",
-            message: ex
+            message: ex.message
         };
         return dataToReturn;
     }
