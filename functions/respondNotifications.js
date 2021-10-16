@@ -108,4 +108,3 @@ exports.acceptChallenge = functions.https.onCall(async (data,context) => {
     return dataToReturn;
 
 })
-

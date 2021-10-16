@@ -36,7 +36,7 @@ exports.createLadder = ladderFunctions.createLadder;
 exports.deleteChallenge = challengeFunctions.deleteChallenge;
 exports.createChallenge = challengeFunctions.createChallenge;
 exports.addWinnerToChallenge = challengeFunctions.addWinnerToChallenge;
-
+exports.declineChallenge = challengeFunctions.declineChallenge;
 
 //INVITES
 exports.addAdmin = inviteFunctions.addAdmin;

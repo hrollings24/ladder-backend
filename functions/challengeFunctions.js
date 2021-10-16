@@ -165,3 +165,37 @@ exports.addWinnerToChallenge = functions.https.onCall(async (data,context) => {
     return dataToReturn;
 
 })
+
+
+
+exports.declineChallenge = functions.https.onCall(async (data,context) => {
+    //data = [toUserID, message, fromUserID, ladderID, challengeID]
+    
+    //delete challenge
+    await deleteChallengeWith(data.challengeID)
+
+
+    const db = admin.firestore();
+    const toUserRef = db.collection('users').doc(data.toUserID);
+    const ladderRef = db.collection('ladders').doc(data.ladderID);
+
+    //Create notification to inform the other player
+    const dataToSaveForNotification = {
+        toUser: toUserRef,
+        ladder: ladderRef,
+        message: data.message,
+        title: "Challenge Declined",
+        fromUser: db.collection('users').doc(data.fromUserID),
+        type: "message"
+    };
+
+    //go ahead with notificaton
+    await db.collection('notifications').doc().set(dataToSaveForNotification);
+
+    const dataToReturn = {
+        title: "Success",
+        message: "The challenge was declined"
+    };
+    return dataToReturn;
+
+})
