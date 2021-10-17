@@ -83,17 +83,19 @@ exports.acceptChallenge = functions.https.onCall(async (data,context) => {
         "status": "ongoing"
     });
 
-    
-
-    //remove old notification
-    const res = await db.collection('notifications').doc(data.notificationID).delete();    
-
+    let noteExisting = await db.collection('notifications').where('challengeRef', '==', challengeCollectionRef.doc(data.challengeID)).get();
+    if (!noteExisting.empty) {
+        //note exists
+        noteExisting.forEach(note => {
+            note.ref.delete();
+        });
+    }
 
     //send notification to say challenge accepted
     const dataToSave = {
         "toUser": db.collection('users').doc(data.toUser),
         "message": data.message,
-        "ladder": db.collection('users').doc(data.ladderID),
+        "ladder": db.collection('ladders').doc(data.ladderID),
         "type": "message",
         "title": "Challenge Accepted",
         "fromUser": db.collection('users').doc(data.fromUser)
@@ -102,7 +104,7 @@ exports.acceptChallenge = functions.https.onCall(async (data,context) => {
     await db.collection('notifications').doc().set(dataToSave);
     
     const dataToReturn = {
-        title: "Challenge Accepted",
+        title: "Success",
         message: "The challenge has been accepted"
     };
     return dataToReturn;
