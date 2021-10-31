@@ -122,12 +122,13 @@ exports.deleteUser = functions.https.onCall(async (data,context) => {
     let user = await userToDelete.get();
     let userData = user.data()
     let usersChallenges = userData.challenges
-    usersChallenges.forEach(doc => {
-        //doc is a challenge that needs deleting
-        deleteChallengeWith(doc.id)
-
-    });
-
+    if (usersChallenges != null){
+        usersChallenges.forEach(doc => {
+            //doc is a challenge that needs deleting
+            deleteChallengeWith(doc.id)
+    
+        });
+    }
 
     userToDelete.delete();
     return "true";
