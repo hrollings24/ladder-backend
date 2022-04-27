@@ -53,7 +53,7 @@ exports.acceptAdminInvite = functions.https.onCall(async (data,context) => {
 })
 
 //ACCEPT CHALLENGE
-exports.acceptChallenge = functions.https.onCall(async (data,context) => {
+exports.acceptChallengeOld = functions.https.onCall(async (data,context) => {
     const db = admin.firestore();
 
     //Change challenge status to ongoing

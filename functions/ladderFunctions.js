@@ -511,3 +511,123 @@ exports.createLadder = functions.https.onCall(async (data,context) => {
         return dataToReturn;
     }
 })
+
+
+exports.removeInvites = functions.https.onCall(async (data,context) => {
+    //data = [userIdToDelete: String, ladderId: String, message: String, fromUserId: String]
+
+    if(!data.hasOwnProperty('userIdToDelete')){
+        throw new functions.https.HttpsError('Missing Argument', "Function expected userIdToDelete, but it was not found" )
+    }
+    if(!data.hasOwnProperty('ladderId')){
+        throw new functions.https.HttpsError('Missing Argument', "Function expected ladderId, but it was not found" )
+    }
+    if(!data.hasOwnProperty('message')){
+        throw new functions.https.HttpsError('Missing Argument', "Function expected message, but it was not found" )
+    }
+    if(!data.hasOwnProperty('fromUserId')){
+        throw new functions.https.HttpsError('Missing Argument', "Function expected fromUserId, but it was not found" )
+    }
+
+    const db = admin.firestore();
+    const toUserRef = db.collection('users').doc(data.userIdToDelete);
+    const ladderRef = db.collection('ladders').doc(data.ladderId);
+    const fromUserRef = db.collection('users').doc(data.fromUserId);
+
+
+    //find notification
+    let notes = await db.collection('notifications')
+    .where('toUser', '==', toUserRef)
+    .where('ladder', '==', ladderRef)
+    .where('type', '==', 'invite').get();
+
+    if (notes.empty) {
+        //Challenge already exists
+        throw new functions.https.HttpsError('Invalid Request', "No invites exist to delete" )
+    }
+
+    notes.forEach(element => {
+        let noteRef = element.ref;
+        noteRef.delete();
+    });
+    
+    //send notificatioin
+    const dataToSave = {
+        toUser: fromUserRef,
+        ladder: ladderRef,
+        message: data.message,
+        title: "Invitation Removed",
+        fromUser: toUserRef,
+        type: "message"
+    };
+
+    await db.collection('notifications').doc().set(dataToSave);
+
+    const dataToReturn = {
+        title: "Success",
+        message: "Invites deleted"
+    };
+    return dataToReturn
+
+})
+
+
+exports.removeAdmin = functions.https.onCall(async (data,context) => {
+    //data = [userIdToDelete: String, ladderId: String, message: String, fromUserId: String]
+
+    if(!data.hasOwnProperty('userIdToDelete')){
+        throw new functions.https.HttpsError('Missing Argument', "Function expected userIdToDelete, but it was not found" )
+    }
+    if(!data.hasOwnProperty('ladderId')){
+        throw new functions.https.HttpsError('Missing Argument', "Function expected ladderId, but it was not found" )
+    }
+    if(!data.hasOwnProperty('message')){
+        throw new functions.https.HttpsError('Missing Argument', "Function expected message, but it was not found" )
+    }
+    if(!data.hasOwnProperty('fromUserId')){
+        throw new functions.https.HttpsError('Missing Argument', "Function expected fromUserId, but it was not found" )
+    }
+
+    const db = admin.firestore();
+    const toUserRef = db.collection('users').doc(data.userIdToDelete);
+    const ladderRef = db.collection('ladders').doc(data.ladderId);
+    const fromUserRef = db.collection('users').doc(data.fromUserId);
+
+
+    //check how many admins there are
+    let ladder = await ladderRef.get();
+    let admins = ladder.data().admins
+
+    //if only 1, send message saying they need to add another admin first
+    if (admins.length < 2)
+    {
+        const dataToReturn = {
+            title: "Error",
+            message: "You must add a new admin before removing yourself"
+        };
+        return dataToReturn
+    }
+
+    //if more than one, remove the admin
+    ladderRef.update({
+        requests: FieldValue.arrayRemove(data.userIdToDelete)
+    });
+
+     //send notificatioin
+     const dataToSave = {
+        toUser: fromUserRef,
+        ladder: ladderRef,
+        message: data.message,
+        title: "Admin Revoked",
+        fromUser: toUserRef,
+        type: "message"
+    };
+
+    await db.collection('notifications').doc().set(dataToSave);
+
+    const dataToReturn = {
+        title: "Success",
+        message: "The admin has been removed"
+    };
+    return dataToReturn
+})

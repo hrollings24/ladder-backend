@@ -11,7 +11,10 @@ const challengeFunctions = require('./challengeFunctions');
 const inviteFunctions = require('./invites');
 const respondFunctions = require('./respondNotifications');
 const accountFunctions = require('./account');
+const testFunctions = require('./testFunctions');
 
+const notificationsAPI = require('./endpoints/notificationsAPI');
+const challengeAPI = require('./endpoints/challengeAPI');
 
 
 //SYSTEM
@@ -31,12 +34,13 @@ exports.rejectNormalInvite = ladderFunctions.rejectNormalInvite;
 exports.rejectAdminInvite = ladderFunctions.rejectAdminInvite;
 exports.checkName = ladderFunctions.checkName;
 exports.createLadder = ladderFunctions.createLadder;
+exports.removeInvites = ladderFunctions.removeInvites;
+exports.removeAdmin = ladderFunctions.removeAdmin;
 
 //CHALLENGE
 exports.deleteChallenge = challengeFunctions.deleteChallenge;
-exports.createChallenge = challengeFunctions.createChallenge;
 exports.addWinnerToChallenge = challengeFunctions.addWinnerToChallenge;
-exports.declineChallenge = challengeFunctions.declineChallenge;
+
 
 //INVITES
 exports.addAdmin = inviteFunctions.addAdmin;
@@ -44,9 +48,19 @@ exports.inviteUser = inviteFunctions.inviteUser;
 
 //RESPOND
 exports.acceptAdminInvite = respondFunctions.acceptAdminInvite;
-exports.acceptChallenge = respondFunctions.acceptChallenge;
 
 //ACCOUNT
 exports.saveAccountChanges = accountFunctions.saveAccountChanges;
 
+//TEST FUNCTIONS
+exports.returnAnError = testFunctions.returnAnError;
 
+
+//Challenge API
+exports.createChallenge = challengeAPI.createChallenge;
+exports.acceptChallenge = challengeAPI.acceptChallenge;
+exports.declineChallenge = challengeAPI.declineChallenge;
+exports.addWinnerToChallenge = challengeAPI.addWinnerToChallenge;
+exports.confirmWinner = challengeAPI.confirmWinner;
+exports.declineWinner = challengeAPI.declineWinner;
+exports.deleteChallenge = challengeAPI.deleteChallenge;
