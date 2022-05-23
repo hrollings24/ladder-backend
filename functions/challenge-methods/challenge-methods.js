@@ -343,7 +343,7 @@ module.exports.ConfirmChallenge = async function(challengeId, authedUser){
     var positions = ladderSnapshot.data().positions
 
     var winnerPos = positions.indexOf(challengeSnapshot.data().winner);
-    var loserPos = positions.indexOf(loserId.id);
+    var loserPos = positions.indexOf(loserRef.id);
 
 
     if (winnerPos > loserPos)
@@ -426,7 +426,7 @@ module.exports.DeclineWinner = async function(challengeId, authedUser){
         toUser: toUserRef,
         ladder: ladderRef,
         message: "The winner for your challenge in " + challengeSnapshot.data().ladderName + " was declined",
-        title: "Challenge Complete",
+        title: "Winner Declined",
         fromUser: db.collection('users').doc(authedUser),
         type: "message"
     };

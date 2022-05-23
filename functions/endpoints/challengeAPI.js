@@ -208,7 +208,7 @@ exports.confirmWinner = functions.https.onCall(async (challengeID,context) => {
         throw new functions.https.HttpsError('permission-denied',  'You cannot complete this challenge')
     }
 
-    return challengeMethods.ConfirmChallenge(challengeSnapshot, context.auth.uid).then((result) => {
+    return challengeMethods.ConfirmChallenge(challengeID, context.auth.uid).then((result) => {
         return result;
     }).catch((ex) => {
         if (ex.errorcode)
@@ -216,7 +216,7 @@ exports.confirmWinner = functions.https.onCall(async (challengeID,context) => {
             throw new functions.https.HttpsError(ex.errorcode,  ex.message)
         }
         throw new functions.https.HttpsError('internal',  ex)
-    }); 
+    });
 })
 
 exports.declineWinner = functions.https.onCall(async (challengeID,context) => {
